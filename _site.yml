@@ -1,0 +1,25 @@
+name: "PSA purification"
+output_dir: docs      
+navbar:
+  title: "PSA purification"
+  type: inverse
+  left:
+  - text: Summary
+    href: index.html
+  - text: Descriptive
+    href: descriptive.html
+  - text: "Method comparison"
+    href: method-comparison.html
+  right:
+  - icon: fa-home fa-lg
+    href: http://aprendeconalf.es/
+output:
+  html_document:
+    theme: cosmo
+    toc: yes
+    toc_float: yes
+    fig_width: 8
+    fig_height: 6
+    df_print: paged
+    lib_dir: site_libs      
+    self_contained: yes

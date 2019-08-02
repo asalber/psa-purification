@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2019-08-02" />
+
+<title>Descriptive statistics</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PSA purification</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Summary</a>
+</li>
+<li>
+  <a href="descriptive.html">Descriptive</a>
+</li>
+<li>
+  <a href="method-comparison.html">Method comparison</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="http://aprendeconalf.es/">
+    <span class="fa fa-home fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Descriptive statistics</h1>
+<h4 class="date">2019-08-02</h4>
+
+</div>
+
+
+<div id="means-and-standard-deviations" class="section level1">
+<h1>Means and standard deviations</h1>
+<p><img src="descriptive_files/figure-html/scatter-plot-1.png" width="2400" /></p>
+<table>
+<colgroup>
+<col width="9%" />
+<col width="12%" />
+<col width="5%" />
+<col width="16%" />
+<col width="13%" />
+<col width="13%" />
+<col width="14%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Peak</th>
+<th align="left">Method</th>
+<th align="right">n</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">se</th>
+<th align="right">lower.ci</th>
+<th align="right">upper.ci</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">peak 1</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">1.83</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.83</td>
+<td align="right">1.83</td>
+</tr>
+<tr class="even">
+<td align="left">peak 1</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">0.1067</td>
+<td align="right">0.1767</td>
+<td align="right">0.102</td>
+<td align="right">-0.3324</td>
+<td align="right">0.5457</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 1</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.62</td>
+<td align="right">0.26</td>
+<td align="right">0.1501</td>
+<td align="right">-0.02588</td>
+<td align="right">1.266</td>
+</tr>
+<tr class="even">
+<td align="left">peak 1</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.003333</td>
+<td align="right">0.189</td>
+<td align="right">0.1091</td>
+<td align="right">-0.4729</td>
+<td align="right">0.4662</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 1</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.31</td>
+<td align="right">0.1447</td>
+<td align="right">0.08353</td>
+<td align="right">-0.04941</td>
+<td align="right">0.6694</td>
+</tr>
+<tr class="even">
+<td align="left">peak 1</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.07333</td>
+<td align="right">0.1153</td>
+<td align="right">0.06658</td>
+<td align="right">-0.2132</td>
+<td align="right">0.3598</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 2</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">-4.453</td>
+<td align="right">2.229</td>
+<td align="right">1.287</td>
+<td align="right">-9.99</td>
+<td align="right">1.084</td>
+</tr>
+<tr class="even">
+<td align="left">peak 2</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">-2.35</td>
+<td align="right">1.309</td>
+<td align="right">0.756</td>
+<td align="right">-5.603</td>
+<td align="right">0.9028</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 2</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.8133</td>
+<td align="right">0.4143</td>
+<td align="right">0.2392</td>
+<td align="right">-0.2158</td>
+<td align="right">1.842</td>
+</tr>
+<tr class="even">
+<td align="left">peak 2</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">0.19</td>
+<td align="right">0.2179</td>
+<td align="right">0.1258</td>
+<td align="right">-0.3514</td>
+<td align="right">0.7314</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 2</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">-8.403</td>
+<td align="right">2.603</td>
+<td align="right">1.503</td>
+<td align="right">-14.87</td>
+<td align="right">-1.936</td>
+</tr>
+<tr class="even">
+<td align="left">peak 2</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.8</td>
+<td align="right">1.218</td>
+<td align="right">0.7032</td>
+<td align="right">-2.225</td>
+<td align="right">3.825</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 3</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">0.67</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0.67</td>
+<td align="right">0.67</td>
+</tr>
+<tr class="even">
+<td align="left">peak 3</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">-0.4867</td>
+<td align="right">0.2287</td>
+<td align="right">0.132</td>
+<td align="right">-1.055</td>
+<td align="right">0.08144</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 3</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.07</td>
+<td align="right">0.129</td>
+<td align="right">0.07446</td>
+<td align="right">-0.2504</td>
+<td align="right">0.3904</td>
+</tr>
+<tr class="even">
+<td align="left">peak 3</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.28</td>
+<td align="right">0.3398</td>
+<td align="right">0.1962</td>
+<td align="right">-1.124</td>
+<td align="right">0.564</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 3</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.2767</td>
+<td align="right">0.4095</td>
+<td align="right">0.2364</td>
+<td align="right">-0.7406</td>
+<td align="right">1.294</td>
+</tr>
+<tr class="even">
+<td align="left">peak 3</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.58</td>
+<td align="right">0.3371</td>
+<td align="right">0.1946</td>
+<td align="right">-0.2574</td>
+<td align="right">1.417</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 4</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">-2.583</td>
+<td align="right">4.131</td>
+<td align="right">2.385</td>
+<td align="right">-12.85</td>
+<td align="right">7.679</td>
+</tr>
+<tr class="even">
+<td align="left">peak 4</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">-0.5133</td>
+<td align="right">1.283</td>
+<td align="right">0.7405</td>
+<td align="right">-3.699</td>
+<td align="right">2.673</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 4</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.5567</td>
+<td align="right">1.608</td>
+<td align="right">0.9283</td>
+<td align="right">-3.437</td>
+<td align="right">4.551</td>
+</tr>
+<tr class="even">
+<td align="left">peak 4</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">0.12</td>
+<td align="right">1.301</td>
+<td align="right">0.7511</td>
+<td align="right">-3.112</td>
+<td align="right">3.352</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 4</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.04333</td>
+<td align="right">1.642</td>
+<td align="right">0.9478</td>
+<td align="right">-4.035</td>
+<td align="right">4.121</td>
+</tr>
+<tr class="even">
+<td align="left">peak 4</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">-4.787</td>
+<td align="right">2.915</td>
+<td align="right">1.683</td>
+<td align="right">-12.03</td>
+<td align="right">2.455</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 5</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">3.237</td>
+<td align="right">2.077</td>
+<td align="right">1.199</td>
+<td align="right">-1.924</td>
+<td align="right">8.397</td>
+</tr>
+<tr class="even">
+<td align="left">peak 5</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">0.4267</td>
+<td align="right">0.635</td>
+<td align="right">0.3666</td>
+<td align="right">-1.151</td>
+<td align="right">2.004</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 5</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.58</td>
+<td align="right">0.1908</td>
+<td align="right">0.1102</td>
+<td align="right">0.1061</td>
+<td align="right">1.054</td>
+</tr>
+<tr class="even">
+<td align="left">peak 5</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">0.3167</td>
+<td align="right">0.8843</td>
+<td align="right">0.5105</td>
+<td align="right">-1.88</td>
+<td align="right">2.513</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 5</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">3.3</td>
+<td align="right">0.8632</td>
+<td align="right">0.4983</td>
+<td align="right">1.156</td>
+<td align="right">5.444</td>
+</tr>
+<tr class="even">
+<td align="left">peak 5</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.9133</td>
+<td align="right">0.2095</td>
+<td align="right">0.121</td>
+<td align="right">0.3928</td>
+<td align="right">1.434</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 6</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">-0.92</td>
+<td align="right">1.478</td>
+<td align="right">0.8535</td>
+<td align="right">-4.592</td>
+<td align="right">2.752</td>
+</tr>
+<tr class="even">
+<td align="left">peak 6</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">0.6267</td>
+<td align="right">0.6928</td>
+<td align="right">0.4</td>
+<td align="right">-1.094</td>
+<td align="right">2.348</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 6</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">-2.153</td>
+<td align="right">0.05508</td>
+<td align="right">0.0318</td>
+<td align="right">-2.29</td>
+<td align="right">-2.017</td>
+</tr>
+<tr class="even">
+<td align="left">peak 6</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.3933</td>
+<td align="right">0.4188</td>
+<td align="right">0.2418</td>
+<td align="right">-1.434</td>
+<td align="right">0.6471</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 6</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.6</td>
+<td align="right">1.29</td>
+<td align="right">0.7448</td>
+<td align="right">-2.604</td>
+<td align="right">3.804</td>
+</tr>
+<tr class="even">
+<td align="left">peak 6</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.3033</td>
+<td align="right">0.3044</td>
+<td align="right">0.1757</td>
+<td align="right">-0.4527</td>
+<td align="right">1.059</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 7</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">1.457</td>
+<td align="right">1.932</td>
+<td align="right">1.116</td>
+<td align="right">-3.344</td>
+<td align="right">6.257</td>
+</tr>
+<tr class="even">
+<td align="left">peak 7</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">2.003</td>
+<td align="right">0.4517</td>
+<td align="right">0.2608</td>
+<td align="right">0.8812</td>
+<td align="right">3.125</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 7</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">0.3233</td>
+<td align="right">0.7529</td>
+<td align="right">0.4347</td>
+<td align="right">-1.547</td>
+<td align="right">2.194</td>
+</tr>
+<tr class="even">
+<td align="left">peak 7</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">1.5</td>
+<td align="right">0.5284</td>
+<td align="right">0.3051</td>
+<td align="right">0.1873</td>
+<td align="right">2.813</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 7</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">2.297</td>
+<td align="right">0.5173</td>
+<td align="right">0.2987</td>
+<td align="right">1.012</td>
+<td align="right">3.582</td>
+</tr>
+<tr class="even">
+<td align="left">peak 7</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">1.733</td>
+<td align="right">1.198</td>
+<td align="right">0.6917</td>
+<td align="right">-1.243</td>
+<td align="right">4.709</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 8</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">-1.12</td>
+<td align="right">0.5901</td>
+<td align="right">0.3407</td>
+<td align="right">-2.586</td>
+<td align="right">0.3459</td>
+</tr>
+<tr class="even">
+<td align="left">peak 8</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">-0.1033</td>
+<td align="right">0.197</td>
+<td align="right">0.1137</td>
+<td align="right">-0.5927</td>
+<td align="right">0.386</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 8</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">-0.7133</td>
+<td align="right">0.1739</td>
+<td align="right">0.1004</td>
+<td align="right">-1.145</td>
+<td align="right">-0.2814</td>
+</tr>
+<tr class="even">
+<td align="left">peak 8</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.64</td>
+<td align="right">0.363</td>
+<td align="right">0.2095</td>
+<td align="right">-1.542</td>
+<td align="right">0.2616</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 8</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.09</td>
+<td align="right">0.3584</td>
+<td align="right">0.2069</td>
+<td align="right">-0.8003</td>
+<td align="right">0.9803</td>
+</tr>
+<tr class="even">
+<td align="left">peak 8</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">-0.3733</td>
+<td align="right">0.105</td>
+<td align="right">0.06064</td>
+<td align="right">-0.6343</td>
+<td align="right">-0.1124</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 9</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">0.2933</td>
+<td align="right">0.1858</td>
+<td align="right">0.1073</td>
+<td align="right">-0.1683</td>
+<td align="right">0.755</td>
+</tr>
+<tr class="even">
+<td align="left">peak 9</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">0.3133</td>
+<td align="right">0.2884</td>
+<td align="right">0.1665</td>
+<td align="right">-0.4032</td>
+<td align="right">1.03</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 9</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">-0.3033</td>
+<td align="right">0.1845</td>
+<td align="right">0.1065</td>
+<td align="right">-0.7616</td>
+<td align="right">0.1549</td>
+</tr>
+<tr class="even">
+<td align="left">peak 9</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.3767</td>
+<td align="right">0.1652</td>
+<td align="right">0.09539</td>
+<td align="right">-0.7871</td>
+<td align="right">0.03378</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 9</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.7867</td>
+<td align="right">0.2594</td>
+<td align="right">0.1498</td>
+<td align="right">0.1422</td>
+<td align="right">1.431</td>
+</tr>
+<tr class="even">
+<td align="left">peak 9</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.4367</td>
+<td align="right">0.3051</td>
+<td align="right">0.1762</td>
+<td align="right">-0.3213</td>
+<td align="right">1.195</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 10</td>
+<td align="left">A</td>
+<td align="right">3</td>
+<td align="right">1.61</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1.61</td>
+<td align="right">1.61</td>
+</tr>
+<tr class="even">
+<td align="left">peak 10</td>
+<td align="left">B</td>
+<td align="right">3</td>
+<td align="right">-0.02</td>
+<td align="right">0.4051</td>
+<td align="right">0.2339</td>
+<td align="right">-1.026</td>
+<td align="right">0.9863</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 10</td>
+<td align="left">C</td>
+<td align="right">3</td>
+<td align="right">-0.03667</td>
+<td align="right">0.1365</td>
+<td align="right">0.07881</td>
+<td align="right">-0.3758</td>
+<td align="right">0.3024</td>
+</tr>
+<tr class="even">
+<td align="left">peak 10</td>
+<td align="left">D</td>
+<td align="right">3</td>
+<td align="right">-0.32</td>
+<td align="right">0.5645</td>
+<td align="right">0.3259</td>
+<td align="right">-1.722</td>
+<td align="right">1.082</td>
+</tr>
+<tr class="odd">
+<td align="left">peak 10</td>
+<td align="left">E</td>
+<td align="right">3</td>
+<td align="right">0.6767</td>
+<td align="right">0.1801</td>
+<td align="right">0.104</td>
+<td align="right">0.2293</td>
+<td align="right">1.124</td>
+</tr>
+<tr class="even">
+<td align="left">peak 10</td>
+<td align="left">F</td>
+<td align="right">3</td>
+<td align="right">0.3133</td>
+<td align="right">0.245</td>
+<td align="right">0.1415</td>
+<td align="right">-0.2953</td>
+<td align="right">0.922</td>
+</tr>
+</tbody>
+</table>
+<p><img src="descriptive_files/figure-html/confidence-intervals-means-1.png" width="2400" /></p>
+<p>We can observe that the method with more variability are A, E and F and the ones with less variability C and D.</p>
+<p>Intervals not containing 0 show a significant differences between the reference and the purified sample.</p>
+<p>In general, method with less variability are preferable, even if there is a significant variation, when the variation is close to zero.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

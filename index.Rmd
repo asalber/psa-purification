@@ -1,0 +1,75 @@
+---
+title: "PSA purification"
+date: "`r Sys.Date()`"
+---
+
+```{r knitr-init, echo=F}
+library(knitr)
+## Global options
+options(digits = 4)
+opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+```
+
+```{r packages, results='hide'}
+.packages <- c("DT")
+.installed <- .packages %in% installed.packages()
+if (length(.packages[!.installed])>0) install.packages(.packages[!.installed])
+lapply(.packages, require, character.only=T)
+```
+
+<!-- # Authors -->
+
+<!-- - Mercedes de Frutos Gómez ([mfrutos@iqog.csic.es](mailto:mfrutos@iqog.csic.es)) -->
+<!-- - Alfredo Sánchez Alberca ([asalber@ceu.es](mailto:asalber@ceu.es)) -->
+
+# Summary
+
+Prostate-Specific Antigen (PSA) is usually purified before applying capillary electrophoresis.
+
+The purpose of this study is to determine if purification significantly alters the sprectrum of PSA and if there are significant differences among six different purification methods:
+<ol type="A">
+<li>antiPSA column</li>
+<li>IgG1 first column</li>
+<li>IgG1 second column</li>
+<li>IgG1 two columns</li>
+<li>Off-line coupled columns</li>
+<li>On-line coupled columns</li>
+</ol>
+
+# Objetives
+
+- To determine if purification significantly alters the sprectrum of PSA.
+- Compare six different purification methods.
+
+# Type of study 
+
+Analityc observational cross-sectional and comparative study.
+
+<!-- # Inclusion criteria -->
+
+<!-- Individuals with prostate cancer or benign prostatic hyperplasia. -->
+
+<!-- # Variables -->
+
+<!-- ```{r variables} -->
+<!-- vars <- read.csv(file = "data/variables.csv", header = T, sep = ",") -->
+<!-- datatable(vars, rownames = F, escape=F, class = 'display', options = list(dom="ltip")) -->
+<!-- ``` -->
+
+# Sample size
+
+```{r data-loading}
+source("data-loading.R")
+```
+
+
+Total number of analysis: `r nrow(data)/10`
+```{r sample-size-groups}
+countTable <- tbl_df(data) %>% count(Method)
+countTable$n <- countTable$n / 10
+pander(countTable)
+```
+
+# Glosary
+
+- PSA: Prostate-Specific Antigen

@@ -1,0 +1,43 @@
+---
+title: "Method comparison"
+date: "`r Sys.Date()`"
+---
+
+```{r knitr-init, echo=F}
+library(knitr)
+## Global options
+options(digits = 4)
+opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+```
+
+```{r data-loading, results='hide'}
+source("data-loading.R")
+```
+
+# Comparison of means of methods E and F
+
+```{r t-test-EF}
+data.EF <- data[data$Method %in% c("E", "F"), ]
+result <- data.EF %>% group_by(Peak, Method) %>%
+  summarize(Variation = list(Variation)) %>%
+  spread(Method, Variation) %>%
+  mutate(t_value = t.test(unlist(E), unlist(F), var.equal = T)$statistic, 
+         p_value = t.test(unlist(E), unlist(F), var.equal = T)$p.value,
+         lower.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[1],
+         upper.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[2])
+pander(result[, c(1, 4:7)])
+```
+
+We can observe that the only peaks wehre there is a significant difference are peak 2 and 5. 
+
+```{r confidence-intervals-EF}
+statistics <- data.EF %>% group_by(Peak, Method) %>% 
+  summarise(n = n(), mean = mean(Variation, na.rm = T), sd = sd(After, na.rm = T)) %>%
+    mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
+ggplot(data = statistics, aes(x = Peak, y = mean, colour = Method, shape = Method)) +
+  geom_pointrange(aes(ymin = lower.ci, ymax = upper.ci), position = position_dodge(width = 0.5)) +
+  ggtitle("Confidence intervals for the means of \n variation of percentage of areas covered by peaks of PSA") +
+   ylab("% Area before - % Area after") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
