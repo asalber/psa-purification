@@ -17,9 +17,9 @@ output:
   html_document:
     theme: cosmo
     toc: yes
-    toc_float: yes
+    toc_float: yes            
     fig_width: 8
     fig_height: 6
     df_print: paged
     lib_dir: site_libs      
-    self_contained: yes
+    self_contained: no              

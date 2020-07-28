@@ -8,36 +8,370 @@ library(knitr)
 ## Global options
 options(digits = 4)
 opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+color1 <- "#F8766D"
+```
+
+```{r packages, results='hide'}
+# Load packages
+.packages <- c("tidyverse", "rstatix", "crosstalk", "reactable", "htmltools", "ggpubr", "kableExtra")
+.installed <- .packages %in% installed.packages()
+if (length(.packages[!.installed])>0) install.packages(.packages[!.installed])
+lapply(.packages, require, character.only=T)
 ```
 
 ```{r data-loading, results='hide'}
 source("data-loading.R")
 ```
 
-# Comparison of means of methods E and F
+## Confidence intervals for means
 
-```{r t-test-EF}
-data.EF <- data[data$Method %in% c("E", "F"), ]
-result <- data.EF %>% group_by(Peak, Method) %>%
-  summarize(Variation = list(Variation)) %>%
-  spread(Method, Variation) %>%
-  mutate(t_value = t.test(unlist(E), unlist(F), var.equal = T)$statistic, 
-         p_value = t.test(unlist(E), unlist(F), var.equal = T)$p.value,
-         lower.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[1],
-         upper.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[2])
-pander(result[, c(1, 4:7)])
+```{r ci-means}
+stats <- data %>%
+  group_by(Peak, Method, Type) %>%
+  get_summary_stats(Area, type = "mean_ci") %>%
+  mutate(conf.int. = paste0("(", mean - ci, ", ", mean + ci, ")"))
+ 
+stats2 <- SharedData$new(select(stats, -c("variable", "ci")))
+
+bscols(
+  widths = c(2, 10),
+  list(
+    tags$h3("Filter"),
+    filter_select("Method", "Method", stats2, ~Method),
+    filter_select("Type", "Type", stats2, ~Type),
+    filter_select("Peak", "Peak", stats2, ~Peak)
+  ),
+  reactable(stats2, minRows = 10)
+)
 ```
 
-We can observe that the only peaks wehre there is a significant difference are peak 2 and 5. 
-
-```{r confidence-intervals-EF}
-statistics <- data.EF %>% group_by(Peak, Method) %>% 
-  summarise(n = n(), mean = mean(Variation, na.rm = T), sd = sd(After, na.rm = T)) %>%
-    mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
-ggplot(data = statistics, aes(x = Peak, y = mean, colour = Method, shape = Method)) +
-  geom_pointrange(aes(ymin = lower.ci, ymax = upper.ci), position = position_dodge(width = 0.5)) +
-  ggtitle("Confidence intervals for the means of \n variation of percentage of areas covered by peaks of PSA") +
-   ylab("% Area before - % Area after") +
-  theme(plot.title = element_text(hjust = 0.5))
+```{r ci-groups-faceted}
+ggplot(stats) + 
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_pointrange(mapping = aes(x = Method, y = mean, ymin = mean-ci, ymax = mean+ci, colour = Type), size = 0.3, position = position_dodge(width = 0.7)) +
+  ggtitle("95% confidence intervals for the mean of covered area by peaks") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
 ```
+
+## Confidence intervals for the difference of means of non-purified and purified aliquots
+
+```{r ci-diff-means}
+stats.diff <- data %>%
+  group_by(Peak, Method) %>%
+  t_test(Area ~ Type, paired = F, detailed = T) %>%
+  mutate(Diff.means = round(estimate1 - estimate2, 3), Mean.non.purified = round(estimate1, 3), Mean.purified = round(estimate2, 3), conf.int = paste0("(", round(conf.low, 3), ", ", round(conf.high, 3), ")"))
+
+stats.diff2 <- SharedData$new(select(stats.diff, Method, Peak, Mean.non.purified, Mean.purified, conf.int))
+
+bscols(
+  widths = c(2, 10),
+  list(
+    tags$h3("Filter"),
+    filter_select("Method", "Method", stats.diff2, ~Method),
+    filter_select("Peak", "Peak", stats.diff2, ~Peak)
+  ),
+  reactable(stats.diff2, minRows = 10)
+)
+```
+
+```{r ci-diff-groups-faceted}
+ggplot(stats.diff) + 
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_pointrange(mapping = aes(x = Method, y = Diff.means, ymin = conf.low, ymax = conf.high), colour = color1, size = 0.3, position = position_dodge(width = 0.7)) +
+  ggtitle("95% confidence intervals for the difference of non-purified and purified means of covered area by peaks") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+```
+
+
+## Comparison of non-purified and purified aliquots
+
+As the sample size per group is very small (from 3 to 6) instead of using a t-test we use the Mann-Whitney test, a non-parametric method to compare the ranks.
+
+### Method A
+```{r mann-withney-A}
+data %>%
+  filter(Method == "A") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are significant differences between the areas of peaks 1, 3 and 10.
+
+```{r boxplot-A}
+data %>% 
+  filter(Method == "A") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method A")
+```
+
+
+### Method B
+```{r mann-withney-B}
+data %>%
+  filter(Method == "B") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are no significant differences between the areas for all the peaks.
+
+```{r boxplot-B}
+data %>% 
+  filter(Method == "B") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method B")
+```
+
+### Method C
+```{r mann-withney-C}
+data %>%
+  filter(Method == "C") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are no significant differences between the areas for all the peaks.
+
+```{r boxplot-C}
+data %>% 
+  filter(Method == "C") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method C")
+```
+
+### Method D
+```{r mann-withney-D}
+data %>%
+  filter(Method == "D") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are no significant differences between the areas for all the peaks.
+
+```{r boxplot-D}
+data %>% 
+  filter(Method == "D") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method D")
+```
+
+### Method E
+```{r mann-withney-E}
+data %>%
+  filter(Method == "E") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are significant differences between areas of peaks 1, 2, 5, 7, 9 and 10.
+
+```{r boxplot-E}
+data %>% 
+  filter(Method == "E") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method E")
+```
+
+### Method F
+```{r mann-withney-F}
+data %>%
+  filter(Method == "F") %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Type, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there are significant differences between areas of peaks 3, 4, 5 and 7.
+
+```{r boxplot-F}
+data %>% 
+  filter(Method == "F") %>%
+  ggplot(aes(x = Type, y = Area, col = Type)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in non-purified and purified aliquots with method F")
+```
+
+## Comparison of non-purified aliquots
+
+Again, as the sample size is very small (from 3 to 6) instead of using an ANOVA test we use the Kruskal-Wallis test, a non-parametric method to compare the ranks.
+
+```{r kruskal-wallis-non-purified}
+data.non.purified %>%
+  group_by(Peak) %>%
+  kruskal_test(Area ~ Method) %>%
+  select(Peak, n, statistic, df, p) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+We observe significant differences between at least two reference samples in peaks 1, 3, 5 and 8.
+
+```{r dunn-non-purified}
+stats <- data.non.purified %>%
+  group_by(Peak) %>%
+  dunn_test(Area ~ Method, p.adjust.method = "bonferroni") 
+
+stats <- SharedData$new(select(stats, -.y., -statistic))
+
+bscols(
+  widths = c(2, 10),
+  list(
+    tags$h3("Filter"),
+    filter_select("Peak", "Peak", stats, ~Peak)
+  ),
+  reactable(stats, minRows = 10,
+            columns = list(
+              p = colDef(format = colFormat(digits = 3)),
+              p.adj = colDef(format = colFormat(digits = 3))
+            )
+  )
+)
+```
+
+Comparing the referece samples by pairs we can observe:
+
+- For peak 3, there are significant differences between the reference samples A and F and B and F.
+- For peak 5, there are significant differences between the reference samples C and D.
+
+
+## Comparison between purified aliquots with methods E and F
+
+Again, as the sample size per group is very small (from 3 to 6) instead of using a t-test we use the Mann-Whitney test.
+
+```{r mann-withney-E-F}
+data.purified %>%
+  filter(Method %in% c("E", "F")) %>%
+  group_by(Peak) %>%
+  wilcox_test(Area ~ Method, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus, there is no significant difference between methods E and F.
+
+```{r boxplot-E-F}
+data.purified %>% 
+  filter(Method %in% c("E", "F")) %>%
+  ggplot(aes(x = Method, y = Area, col = Method)) +
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of area covered by peaks in purified aliquots with methods E and F")
+```
+
+
+## Comparison of purified aliquots (all methods)
+
+Again, as the sample size is very small (from 3 to 6) instead of using an ANOVA test we use the Kruskal-Wallis test.
+
+```{r kruskal-wallis-purified}
+data.purified %>%
+  group_by(Peak) %>%
+  kruskal_test(Area ~ Method) %>%
+  select(Peak, n, statistic, df, p) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+We observe significant differences between at least two methods in peaks 1, 2, 5, 8, 9 and 10.
+
+```{r dunn-purified}
+stats <- data.purified %>%
+  group_by(Peak) %>%
+  dunn_test(Area ~ Method, p.adjust.method = "bonferroni") 
+
+stats <- SharedData$new(select(stats, -.y., -statistic))
+
+bscols(
+  widths = c(2, 10),
+  list(
+    tags$h3("Filter"),
+    filter_select("Peak", "Peak", stats, ~Peak)
+  ),
+  reactable(stats, minRows = 10,
+            columns = list(
+              p = colDef(format = colFormat(digits = 3)),
+              p.adj = colDef(format = colFormat(digits = 3))
+            )
+  )
+)
+```
+
+Comparing the methods by pairs we can observe that there are significant diferences between methods C and E only for peak 5.
+
+
+## Protein recovery comparison (Methods E and F)
+
+Once again we use the Mann-Whitney test due to the versy small sample sizes.
+
+```{r mann-withney-recovery-E-F}
+data.recovery %>%
+  wilcox_test(Recovery ~ Method, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
+Thus there is a significant difference for alpha = 0.1 but not for alpha = 0.05. 
+
+```{r boxplot-recovery-E-F}
+data.recovery %>% 
+  ggplot(aes(x = Method, y = Recovery, col = Method)) +
+  geom_boxplot() +
+  guides(col = "none") +
+  ggtitle("Boxplot of protein recovery with methods E and F")
+```
+
+Regardin the plot, it seems that there is a clear difference betwen the two methods but this difference is not significant for alpha = 0.05. Using t-test, that has more power we observe below a significant difference, however with such a small sample we can not guarantee the normality condition requiered by this test.
+
+```{r t-test-E-F}
+data.recovery %>%
+  t_test(Recovery ~ Method, paired = F) %>%
+  select(-.y.) %>%
+  kable()  %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
+```
+
 

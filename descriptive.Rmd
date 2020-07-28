@@ -1,6 +1,6 @@
 ---
 title: "Descriptive statistics"
-date: "`r Sys.Date()`"
+date: "2019/09/09"
 ---
 
 ```{r knitr-init, echo=F}
@@ -8,40 +8,108 @@ library(knitr)
 ## Global options
 options(digits = 4)
 opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+color1 <- "#F8766D"
+color2 <- "#00BFC4"
 ```
+
+```{r packages, results='hide'}
+# Load packages
+.packages <- c("tidyverse", "rstatix", "crosstalk", "reactable", "htmltools", "ggstatsplot", "kableExtra")
+.installed <- .packages %in% installed.packages()
+if (length(.packages[!.installed])>0) install.packages(.packages[!.installed])
+lapply(.packages, require, character.only=T)
+```
+  
+# Purified and non-purified aliquots
 
 ```{r data-loading, results='hide'}
 source("data-loading.R")
 ```
 
-# Means and standard deviations
-
-```{r scatter-plot}
-ggplot(data, aes(x = Peak, y = Variation, colour=Method)) + 
-  geom_point(position=position_dodge(width=0.5)) + 
-  #stat_summary(fun.y="mean", size=3, shape=1, geom="point", position=position_dodge(width=0.5)) +
-  ggtitle("Variation of percentage of area covered by peaks of PSA (before - after purification)") +
-  ylab("% Area before - % Area after") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
 ```{r descriptive-statistics-groups}
-statistics <- data %>% group_by(Peak, Method) %>% 
-  summarise(n = n(), mean = mean(Variation, na.rm = T), sd = sd(After, na.rm = T)) %>%
-    mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
-pander(statistics, split.cells = 1)
+stats <- data %>%
+  group_by(Peak, Method, Type) %>%
+  get_summary_stats(Area, type = "mean_sd") %>%
+  select(-c("variable"))
+
+stats <- SharedData$new(stats)
+
+bscols(
+  widths = c(2, 10),
+  list(
+    tags$h3("Filter"),
+    filter_select("Method", "Method", stats, ~Method),
+    filter_select("Type", "Type", stats, ~Type),
+    filter_select("Peak", "Peak", stats, ~Peak)
+  ),
+  reactable(stats, minRows = 10)
+)
 ``` 
 
-```{r confidence-intervals-means}
-ggplot(data = statistics, aes(x = Peak, y = mean, colour = Method, shape = Method)) +
-  geom_pointrange(aes(ymin = lower.ci, ymax = upper.ci), position = position_dodge(width = 0.5)) +
-  ggtitle("Confidence intervals for the means of \n variation of percentage of areas covered by peaks of PSA") +
-   ylab("% Area before - % Area after") +
-  theme(plot.title = element_text(hjust = 0.5))
+```{r bloxplot-groups-faceted}
+ggplot(data, aes(x = Method, y = Area, colour = Type)) + 
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot(position = position_dodge(width = 0.8)) +
+  ggtitle("Percentage of area covered by peaks of PSA") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
 ```
 
-We can observe that the method with more variability are A, E and F and the ones with less variability C and D.
+# Non-purified aliquots
 
-Intervals not containing 0 show a significant differences between the reference and the purified sample.
+```{r bloxplot-groups-non-purified}
+data %>%
+  filter(Type == "Non-purified") %>%
+  ggplot(aes(x = Peak, y = Area, colour = Method)) + 
+  geom_boxplot() +
+  ggtitle("Percentage of area covered by peaks of PSA for non-purified aliquots") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+```
 
-In general, method with less variability are preferable, even if there is a significant variation, when the variation is close to zero.
+
+```{r bloxplot-groups-faceted-non-purified}
+data %>%
+  filter(Type == "Non-purified") %>%
+  ggplot(aes(x = Method, y = Area)) + 
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot(colour = color1) +
+  ggtitle("Percentage of area covered by peaks of PSA for non-purified aliquots") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+```
+
+
+# Purified aliquots
+
+```{r bloxplot-groups-purified}
+data %>%
+  filter(Type == "Purified") %>%
+  ggplot(aes(x = Peak, y = Area, colour = Method)) + 
+  geom_boxplot() +
+  ggtitle("Percentage of area covered by peaks of PSA for purified aliquots") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+```
+
+
+```{r bloxplot-groups-faceted-purified}
+data %>%
+  filter(Type == "Purified") %>%
+  ggplot(aes(x = Method, y = Area)) + 
+  facet_wrap(vars(Peak), scales = "free") +
+  geom_boxplot(colour = color1) +
+  ggtitle("Percentage of area covered by peaks of PSA for purified aliquots") +
+  xlab("") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme_bw()
+```

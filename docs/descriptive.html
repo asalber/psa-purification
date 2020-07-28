@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
-<meta name="date" content="2019-08-02" />
 
 <title>Descriptive statistics</title>
 
+<script src="site_libs/header-attrs-2.1/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -29,6 +28,16 @@
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
 <script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+<link href="site_libs/selectize-0.11.2/css/selectize.bootstrap3.css" rel="stylesheet" />
+<script src="site_libs/selectize-0.11.2/js/selectize.min.js"></script>
+<link href="site_libs/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+<script src="site_libs/core-js-2.5.3/shim.min.js"></script>
+<script src="site_libs/react-16.12.0/react.min.js"></script>
+<script src="site_libs/react-16.12.0/react-dom.min.js"></script>
+<script src="site_libs/reactwidget-1.0.0/react-tools.js"></script>
+<script src="site_libs/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<script src="site_libs/reactable-binding-0.2.0/reactable.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
@@ -92,7 +101,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -241,6 +249,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -269,6 +278,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -374,644 +389,98 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Descriptive statistics</h1>
-<h4 class="date">2019-08-02</h4>
+<h4 class="date">2019/09/09</h4>
 
 </div>
 
 
-<div id="means-and-standard-deviations" class="section level1">
-<h1>Means and standard deviations</h1>
-<p><img src="descriptive_files/figure-html/scatter-plot-1.png" width="2400" /></p>
-<table>
-<colgroup>
-<col width="9%" />
-<col width="12%" />
-<col width="5%" />
-<col width="16%" />
-<col width="13%" />
-<col width="13%" />
-<col width="14%" />
-<col width="14%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">Peak</th>
-<th align="left">Method</th>
-<th align="right">n</th>
-<th align="right">mean</th>
-<th align="right">sd</th>
-<th align="right">se</th>
-<th align="right">lower.ci</th>
-<th align="right">upper.ci</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">peak 1</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">1.83</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1.83</td>
-<td align="right">1.83</td>
-</tr>
-<tr class="even">
-<td align="left">peak 1</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">0.1067</td>
-<td align="right">0.1767</td>
-<td align="right">0.102</td>
-<td align="right">-0.3324</td>
-<td align="right">0.5457</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 1</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.62</td>
-<td align="right">0.26</td>
-<td align="right">0.1501</td>
-<td align="right">-0.02588</td>
-<td align="right">1.266</td>
-</tr>
-<tr class="even">
-<td align="left">peak 1</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.003333</td>
-<td align="right">0.189</td>
-<td align="right">0.1091</td>
-<td align="right">-0.4729</td>
-<td align="right">0.4662</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 1</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.31</td>
-<td align="right">0.1447</td>
-<td align="right">0.08353</td>
-<td align="right">-0.04941</td>
-<td align="right">0.6694</td>
-</tr>
-<tr class="even">
-<td align="left">peak 1</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.07333</td>
-<td align="right">0.1153</td>
-<td align="right">0.06658</td>
-<td align="right">-0.2132</td>
-<td align="right">0.3598</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 2</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">-4.453</td>
-<td align="right">2.229</td>
-<td align="right">1.287</td>
-<td align="right">-9.99</td>
-<td align="right">1.084</td>
-</tr>
-<tr class="even">
-<td align="left">peak 2</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">-2.35</td>
-<td align="right">1.309</td>
-<td align="right">0.756</td>
-<td align="right">-5.603</td>
-<td align="right">0.9028</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 2</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.8133</td>
-<td align="right">0.4143</td>
-<td align="right">0.2392</td>
-<td align="right">-0.2158</td>
-<td align="right">1.842</td>
-</tr>
-<tr class="even">
-<td align="left">peak 2</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">0.19</td>
-<td align="right">0.2179</td>
-<td align="right">0.1258</td>
-<td align="right">-0.3514</td>
-<td align="right">0.7314</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 2</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">-8.403</td>
-<td align="right">2.603</td>
-<td align="right">1.503</td>
-<td align="right">-14.87</td>
-<td align="right">-1.936</td>
-</tr>
-<tr class="even">
-<td align="left">peak 2</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.8</td>
-<td align="right">1.218</td>
-<td align="right">0.7032</td>
-<td align="right">-2.225</td>
-<td align="right">3.825</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 3</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">0.67</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">0.67</td>
-<td align="right">0.67</td>
-</tr>
-<tr class="even">
-<td align="left">peak 3</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">-0.4867</td>
-<td align="right">0.2287</td>
-<td align="right">0.132</td>
-<td align="right">-1.055</td>
-<td align="right">0.08144</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 3</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.07</td>
-<td align="right">0.129</td>
-<td align="right">0.07446</td>
-<td align="right">-0.2504</td>
-<td align="right">0.3904</td>
-</tr>
-<tr class="even">
-<td align="left">peak 3</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.28</td>
-<td align="right">0.3398</td>
-<td align="right">0.1962</td>
-<td align="right">-1.124</td>
-<td align="right">0.564</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 3</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.2767</td>
-<td align="right">0.4095</td>
-<td align="right">0.2364</td>
-<td align="right">-0.7406</td>
-<td align="right">1.294</td>
-</tr>
-<tr class="even">
-<td align="left">peak 3</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.58</td>
-<td align="right">0.3371</td>
-<td align="right">0.1946</td>
-<td align="right">-0.2574</td>
-<td align="right">1.417</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 4</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">-2.583</td>
-<td align="right">4.131</td>
-<td align="right">2.385</td>
-<td align="right">-12.85</td>
-<td align="right">7.679</td>
-</tr>
-<tr class="even">
-<td align="left">peak 4</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">-0.5133</td>
-<td align="right">1.283</td>
-<td align="right">0.7405</td>
-<td align="right">-3.699</td>
-<td align="right">2.673</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 4</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.5567</td>
-<td align="right">1.608</td>
-<td align="right">0.9283</td>
-<td align="right">-3.437</td>
-<td align="right">4.551</td>
-</tr>
-<tr class="even">
-<td align="left">peak 4</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">0.12</td>
-<td align="right">1.301</td>
-<td align="right">0.7511</td>
-<td align="right">-3.112</td>
-<td align="right">3.352</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 4</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.04333</td>
-<td align="right">1.642</td>
-<td align="right">0.9478</td>
-<td align="right">-4.035</td>
-<td align="right">4.121</td>
-</tr>
-<tr class="even">
-<td align="left">peak 4</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">-4.787</td>
-<td align="right">2.915</td>
-<td align="right">1.683</td>
-<td align="right">-12.03</td>
-<td align="right">2.455</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 5</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">3.237</td>
-<td align="right">2.077</td>
-<td align="right">1.199</td>
-<td align="right">-1.924</td>
-<td align="right">8.397</td>
-</tr>
-<tr class="even">
-<td align="left">peak 5</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">0.4267</td>
-<td align="right">0.635</td>
-<td align="right">0.3666</td>
-<td align="right">-1.151</td>
-<td align="right">2.004</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 5</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.58</td>
-<td align="right">0.1908</td>
-<td align="right">0.1102</td>
-<td align="right">0.1061</td>
-<td align="right">1.054</td>
-</tr>
-<tr class="even">
-<td align="left">peak 5</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">0.3167</td>
-<td align="right">0.8843</td>
-<td align="right">0.5105</td>
-<td align="right">-1.88</td>
-<td align="right">2.513</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 5</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">3.3</td>
-<td align="right">0.8632</td>
-<td align="right">0.4983</td>
-<td align="right">1.156</td>
-<td align="right">5.444</td>
-</tr>
-<tr class="even">
-<td align="left">peak 5</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.9133</td>
-<td align="right">0.2095</td>
-<td align="right">0.121</td>
-<td align="right">0.3928</td>
-<td align="right">1.434</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 6</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">-0.92</td>
-<td align="right">1.478</td>
-<td align="right">0.8535</td>
-<td align="right">-4.592</td>
-<td align="right">2.752</td>
-</tr>
-<tr class="even">
-<td align="left">peak 6</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">0.6267</td>
-<td align="right">0.6928</td>
-<td align="right">0.4</td>
-<td align="right">-1.094</td>
-<td align="right">2.348</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 6</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">-2.153</td>
-<td align="right">0.05508</td>
-<td align="right">0.0318</td>
-<td align="right">-2.29</td>
-<td align="right">-2.017</td>
-</tr>
-<tr class="even">
-<td align="left">peak 6</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.3933</td>
-<td align="right">0.4188</td>
-<td align="right">0.2418</td>
-<td align="right">-1.434</td>
-<td align="right">0.6471</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 6</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.6</td>
-<td align="right">1.29</td>
-<td align="right">0.7448</td>
-<td align="right">-2.604</td>
-<td align="right">3.804</td>
-</tr>
-<tr class="even">
-<td align="left">peak 6</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.3033</td>
-<td align="right">0.3044</td>
-<td align="right">0.1757</td>
-<td align="right">-0.4527</td>
-<td align="right">1.059</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 7</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">1.457</td>
-<td align="right">1.932</td>
-<td align="right">1.116</td>
-<td align="right">-3.344</td>
-<td align="right">6.257</td>
-</tr>
-<tr class="even">
-<td align="left">peak 7</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">2.003</td>
-<td align="right">0.4517</td>
-<td align="right">0.2608</td>
-<td align="right">0.8812</td>
-<td align="right">3.125</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 7</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">0.3233</td>
-<td align="right">0.7529</td>
-<td align="right">0.4347</td>
-<td align="right">-1.547</td>
-<td align="right">2.194</td>
-</tr>
-<tr class="even">
-<td align="left">peak 7</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">1.5</td>
-<td align="right">0.5284</td>
-<td align="right">0.3051</td>
-<td align="right">0.1873</td>
-<td align="right">2.813</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 7</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">2.297</td>
-<td align="right">0.5173</td>
-<td align="right">0.2987</td>
-<td align="right">1.012</td>
-<td align="right">3.582</td>
-</tr>
-<tr class="even">
-<td align="left">peak 7</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">1.733</td>
-<td align="right">1.198</td>
-<td align="right">0.6917</td>
-<td align="right">-1.243</td>
-<td align="right">4.709</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 8</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">-1.12</td>
-<td align="right">0.5901</td>
-<td align="right">0.3407</td>
-<td align="right">-2.586</td>
-<td align="right">0.3459</td>
-</tr>
-<tr class="even">
-<td align="left">peak 8</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">-0.1033</td>
-<td align="right">0.197</td>
-<td align="right">0.1137</td>
-<td align="right">-0.5927</td>
-<td align="right">0.386</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 8</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">-0.7133</td>
-<td align="right">0.1739</td>
-<td align="right">0.1004</td>
-<td align="right">-1.145</td>
-<td align="right">-0.2814</td>
-</tr>
-<tr class="even">
-<td align="left">peak 8</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.64</td>
-<td align="right">0.363</td>
-<td align="right">0.2095</td>
-<td align="right">-1.542</td>
-<td align="right">0.2616</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 8</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.09</td>
-<td align="right">0.3584</td>
-<td align="right">0.2069</td>
-<td align="right">-0.8003</td>
-<td align="right">0.9803</td>
-</tr>
-<tr class="even">
-<td align="left">peak 8</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">-0.3733</td>
-<td align="right">0.105</td>
-<td align="right">0.06064</td>
-<td align="right">-0.6343</td>
-<td align="right">-0.1124</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 9</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">0.2933</td>
-<td align="right">0.1858</td>
-<td align="right">0.1073</td>
-<td align="right">-0.1683</td>
-<td align="right">0.755</td>
-</tr>
-<tr class="even">
-<td align="left">peak 9</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">0.3133</td>
-<td align="right">0.2884</td>
-<td align="right">0.1665</td>
-<td align="right">-0.4032</td>
-<td align="right">1.03</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 9</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">-0.3033</td>
-<td align="right">0.1845</td>
-<td align="right">0.1065</td>
-<td align="right">-0.7616</td>
-<td align="right">0.1549</td>
-</tr>
-<tr class="even">
-<td align="left">peak 9</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.3767</td>
-<td align="right">0.1652</td>
-<td align="right">0.09539</td>
-<td align="right">-0.7871</td>
-<td align="right">0.03378</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 9</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.7867</td>
-<td align="right">0.2594</td>
-<td align="right">0.1498</td>
-<td align="right">0.1422</td>
-<td align="right">1.431</td>
-</tr>
-<tr class="even">
-<td align="left">peak 9</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.4367</td>
-<td align="right">0.3051</td>
-<td align="right">0.1762</td>
-<td align="right">-0.3213</td>
-<td align="right">1.195</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 10</td>
-<td align="left">A</td>
-<td align="right">3</td>
-<td align="right">1.61</td>
-<td align="right">0</td>
-<td align="right">0</td>
-<td align="right">1.61</td>
-<td align="right">1.61</td>
-</tr>
-<tr class="even">
-<td align="left">peak 10</td>
-<td align="left">B</td>
-<td align="right">3</td>
-<td align="right">-0.02</td>
-<td align="right">0.4051</td>
-<td align="right">0.2339</td>
-<td align="right">-1.026</td>
-<td align="right">0.9863</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 10</td>
-<td align="left">C</td>
-<td align="right">3</td>
-<td align="right">-0.03667</td>
-<td align="right">0.1365</td>
-<td align="right">0.07881</td>
-<td align="right">-0.3758</td>
-<td align="right">0.3024</td>
-</tr>
-<tr class="even">
-<td align="left">peak 10</td>
-<td align="left">D</td>
-<td align="right">3</td>
-<td align="right">-0.32</td>
-<td align="right">0.5645</td>
-<td align="right">0.3259</td>
-<td align="right">-1.722</td>
-<td align="right">1.082</td>
-</tr>
-<tr class="odd">
-<td align="left">peak 10</td>
-<td align="left">E</td>
-<td align="right">3</td>
-<td align="right">0.6767</td>
-<td align="right">0.1801</td>
-<td align="right">0.104</td>
-<td align="right">0.2293</td>
-<td align="right">1.124</td>
-</tr>
-<tr class="even">
-<td align="left">peak 10</td>
-<td align="left">F</td>
-<td align="right">3</td>
-<td align="right">0.3133</td>
-<td align="right">0.245</td>
-<td align="right">0.1415</td>
-<td align="right">-0.2953</td>
-<td align="right">0.922</td>
-</tr>
-</tbody>
-</table>
-<p><img src="descriptive_files/figure-html/confidence-intervals-means-1.png" width="2400" /></p>
-<p>We can observe that the method with more variability are A, E and F and the ones with less variability C and D.</p>
-<p>Intervals not containing 0 show a significant differences between the reference and the purified sample.</p>
-<p>In general, method with less variability are preferable, even if there is a significant variation, when the variation is close to zero.</p>
+<div id="purified-and-non-purified-aliquots" class="section level1">
+<h1>Purified and non-purified aliquots</h1>
+<div class="container-fluid crosstalk-bscols">
+<div class="fluid-row">
+<div class="col-xs-2">
+<h3>Filter</h3>
+<div id="Method" class="form-group crosstalk-input-select crosstalk-input">
+<label class="control-label" for="Method">Method</label>
+<div>
+<select multiple></select>
+<script type="application/json" data-for="Method">{
+  "items": {
+    "value": ["A", "B", "C", "D", "E", "F"],
+    "label": ["A", "B", "C", "D", "E", "F"]
+  },
+  "map": {
+    "A": ["1", "2", "13", "14", "25", "26", "37", "38", "49", "50", "61", "62", "73", "74", "85", "86", "97", "98", "109", "110"],
+    "B": ["3", "4", "15", "16", "27", "28", "39", "40", "51", "52", "63", "64", "75", "76", "87", "88", "99", "100", "111", "112"],
+    "C": ["5", "6", "17", "18", "29", "30", "41", "42", "53", "54", "65", "66", "77", "78", "89", "90", "101", "102", "113", "114"],
+    "D": ["7", "8", "19", "20", "31", "32", "43", "44", "55", "56", "67", "68", "79", "80", "91", "92", "103", "104", "115", "116"],
+    "E": ["9", "10", "21", "22", "33", "34", "45", "46", "57", "58", "69", "70", "81", "82", "93", "94", "105", "106", "117", "118"],
+    "F": ["11", "12", "23", "24", "35", "36", "47", "48", "59", "60", "71", "72", "83", "84", "95", "96", "107", "108", "119", "120"]
+  },
+  "group": ["SharedData674d6487"]
+}</script>
+</div>
+</div>
+<div id="Type" class="form-group crosstalk-input-select crosstalk-input">
+<label class="control-label" for="Type">Type</label>
+<div>
+<select multiple></select>
+<script type="application/json" data-for="Type">{
+  "items": {
+    "value": ["Non-purified", "Purified"],
+    "label": ["Non-purified", "Purified"]
+  },
+  "map": {
+    "Non-purified": ["1", "3", "5", "7", "9", "11", "13", "15", "17", "19", "21", "23", "25", "27", "29", "31", "33", "35", "37", "39", "41", "43", "45", "47", "49", "51", "53", "55", "57", "59", "61", "63", "65", "67", "69", "71", "73", "75", "77", "79", "81", "83", "85", "87", "89", "91", "93", "95", "97", "99", "101", "103", "105", "107", "109", "111", "113", "115", "117", "119"],
+    "Purified": ["2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22", "24", "26", "28", "30", "32", "34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54", "56", "58", "60", "62", "64", "66", "68", "70", "72", "74", "76", "78", "80", "82", "84", "86", "88", "90", "92", "94", "96", "98", "100", "102", "104", "106", "108", "110", "112", "114", "116", "118", "120"]
+  },
+  "group": ["SharedData674d6487"]
+}</script>
+</div>
+</div>
+<div id="Peak" class="form-group crosstalk-input-select crosstalk-input">
+<label class="control-label" for="Peak">Peak</label>
+<div>
+<select multiple></select>
+<script type="application/json" data-for="Peak">{
+  "items": {
+    "value": ["peak 1", "peak 2", "peak 3", "peak 4", "peak 5", "peak 6", "peak 7", "peak 8", "peak 9", "peak 10"],
+    "label": ["peak 1", "peak 2", "peak 3", "peak 4", "peak 5", "peak 6", "peak 7", "peak 8", "peak 9", "peak 10"]
+  },
+  "map": {
+    "peak 1": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"],
+    "peak 2": ["13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"],
+    "peak 3": ["25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36"],
+    "peak 4": ["37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48"],
+    "peak 5": ["49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60"],
+    "peak 6": ["61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72"],
+    "peak 7": ["73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84"],
+    "peak 8": ["85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96"],
+    "peak 9": ["97", "98", "99", "100", "101", "102", "103", "104", "105", "106", "107", "108"],
+    "peak 10": ["109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120"]
+  },
+  "group": ["SharedData674d6487"]
+}</script>
+</div>
+</div>
+</div>
+<div class="col-xs-10">
+<div id="htmlwidget-b231ab58be6caeee68e8" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-b231ab58be6caeee68e8">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"Type":["Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified","Non-purified","Purified"],"Method":["A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F","A","A","B","B","C","C","D","D","E","E","F","F"],"Peak":["peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 1","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 2","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 3","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 4","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 5","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 6","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 7","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 8","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 9","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10","peak 10"],"n":[4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3,4,3,4,3,4,3,4,3,5,3,6,3],"mean":[1.752,0,1.668,1.537,1.39,0.78,1.545,1.553,1.446,1.103,1.597,1.55,10.3,14.643,10.222,12.313,10.785,9.913,10.275,9.95,10.398,18.633,11.077,10.49,0.807,0,0.72,1.08,0.93,0.743,0.782,0.907,1.28,0.98,1.343,0.777,55.125,57.747,55.055,55.697,55.535,55.45,56.595,57.163,54.908,55.097,55.535,60.11,7.535,4.367,7.23,6.417,8.065,7.37,6.772,6.39,7.618,4.303,7.197,5.96,7.402,8.56,8.415,8.4,7.068,9.257,8.365,8.963,7.598,7.133,7.472,7.463,8.878,7.167,9.095,7.013,8.853,8.407,8.348,6.627,8.556,6.087,8.73,7.07,4.748,5.953,4.445,4.61,4.46,5.107,4.338,4.973,4.7,4.627,4.287,4.613,1.825,1.547,1.77,1.4,1.282,1.563,1.62,1.82,1.758,0.98,1.483,1.01,1.628,0,1.375,1.53,1.56,1.557,1.435,1.64,1.714,1.043,1.272,0.957],"sd":[0.193,0,0.092,0.177,0.234,0.26,0.167,0.189,0.065,0.145,0.096,0.115,0.239,2.229,0.521,1.309,0.322,0.414,0.45,0.218,0.4,2.603,0.684,1.218,0.318,0,0.283,0.229,0.258,0.129,0.319,0.34,0.057,0.41,0.057,0.337,0.284,4.131,0.584,1.283,1.342,1.608,1.471,1.301,0.423,1.642,0.734,2.915,0.184,2.077,0.814,0.635,0.384,0.191,0.136,0.884,0.222,0.863,0.426,0.21,0.557,1.478,1.323,0.693,0.099,0.055,0.543,0.419,0.298,1.29,0.62,0.304,0.511,1.932,0.286,0.452,0.611,0.753,0.47,0.528,0.279,0.517,0.232,1.198,0.228,0.59,0.203,0.197,0.395,0.174,0.244,0.363,0.07,0.358,0.226,0.105,0.138,0.186,0.161,0.288,0.25,0.184,0.502,0.165,0.147,0.259,0.313,0.305,0.278,0,0.362,0.405,0.311,0.137,0.267,0.565,0.13,0.18,0.449,0.245]},"columns":[{"accessor":"Type","name":"Type","type":"factor"},{"accessor":"Method","name":"Method","type":"factor"},{"accessor":"Peak","name":"Peak","type":"factor"},{"accessor":"n","name":"n","type":"numeric"},{"accessor":"mean","name":"mean","type":"numeric"},{"accessor":"sd","name":"sd","type":"numeric"}],"defaultPageSize":10,"paginationType":"numbers","showPageInfo":true,"minRows":10,"crosstalkKey":["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","94","95","96","97","98","99","100","101","102","103","104","105","106","107","108","109","110","111","112","113","114","115","116","117","118","119","120"],"crosstalkGroup":"SharedData674d6487","dataKey":"72c4359b263d8759ee2937b645986cb3"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+<p><img src="descriptive_files/figure-html/bloxplot-groups-faceted-1.png" width="2400" /></p>
+</div>
+<div id="non-purified-aliquots" class="section level1">
+<h1>Non-purified aliquots</h1>
+<p><img src="descriptive_files/figure-html/bloxplot-groups-non-purified-1.png" width="2400" /></p>
+<p><img src="descriptive_files/figure-html/bloxplot-groups-faceted-non-purified-1.png" width="2400" /></p>
+</div>
+<div id="purified-aliquots" class="section level1">
+<h1>Purified aliquots</h1>
+<p><img src="descriptive_files/figure-html/bloxplot-groups-purified-1.png" width="2400" /></p>
+<p><img src="descriptive_files/figure-html/bloxplot-groups-faceted-purified-1.png" width="2400" /></p>
 </div>
 
 

@@ -1,0 +1,213 @@
+---
+title: "PSA purification"
+date: "`r Sys.Date()`"
+---
+
+```{r knitr-init, echo=F}
+library(knitr)
+## Global options
+options(digits = 4)
+opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+```
+
+```{r packages, results='hide'}
+.packages <- c("DT")
+.installed <- .packages %in% installed.packages()
+if (length(.packages[!.installed])>0) install.packages(.packages[!.installed])
+lapply(.packages, require, character.only=T)
+```
+
+<!-- # Authors -->
+
+<!-- - Mercedes de Frutos Gómez ([mfrutos@iqog.csic.es](mailto:mfrutos@iqog.csic.es)) -->
+<!-- - Alfredo Sánchez Alberca ([asalber@ceu.es](mailto:asalber@ceu.es)) -->
+
+# Summary
+
+Prostate-Specific Antigen (PSA) is usually purified before applying capillary electrophoresis.
+
+The purpose of this study is to determine if purification significantly alters the sprectrum of PSA and if there are significant differences among six different purification methods:
+<ol type="A">
+<li>antiPSA column</li>
+<li>IgG1 first column</li>
+<li>IgG1 second column</li>
+<li>IgG1 two columns</li>
+<li>Off-line coupled columns</li>
+<li>On-line coupled columns</li>
+</ol>
+
+# Objetives
+
+- To determine if purification significantly alters the sprectrum of PSA.
+- Compare six different purification methods.
+
+# Type of study 
+
+Analityc observational cross-sectional and comparative study.
+
+<!-- # Inclusion criteria -->
+
+<!-- Individuals with prostate cancer or benign prostatic hyperplasia. -->
+
+<!-- # Variables -->
+
+<!-- ```{r variables} -->
+<!-- vars <- read.csv(file = "data/variables.csv", header = T, sep = ",") -->
+<!-- datatable(vars, rownames = F, escape=F, class = 'display', options = list(dom="ltip")) -->
+<!-- ``` -->
+
+# Sample size
+
+```{r data-loading}
+source("data-loading.R")
+```
+
+
+Total number of analysis: `r nrow(data)/10`
+```{r sample-size-groups}
+countTable <- tbl_df(data) %>% count(Method)
+countTable$n <- countTable$n / 10
+pander(countTable)
+```
+
+# Glosary
+
+- PSA: Prostate-Specific Antigen
+
+<!--chapter:end:index.Rmd-->
+
+---
+title: "Descriptive statistics"
+date: "`r Sys.Date()`"
+---
+
+```{r knitr-init, echo=F}
+library(knitr)
+## Global options
+options(digits = 4)
+opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+color1 <- "#56B4E9"
+color2 <- "#CC79A7"
+```
+
+```{r data-loading, results='hide'}
+source("data-loading.R")
+```
+
+
+# Non-pufied aliquot
+
+```{r descriptive-statistics-non-purified}
+statistics <- data.non.purified %>% 
+  group_by(Peak) %>% 
+  summarise(n = n(), mean = mean(Area, na.rm = T), sd = sd(Area, na.rm = T)) %>%
+  mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
+pander(statistics, split.cells = 1)
+``` 
+
+```{r scatter-plot-non-purified}
+ggplot(data.non.purified, aes(x = Peak, y = Area)) + 
+  geom_jitter(width = 0.2, colour = color1) + 
+  geom_pointrange(data = statistics, mapping=aes(x=Peak, y=mean, ymin=mean-sd, ymax=mean+sd), shape = 95, size = 1.5, colour = color2 ) +
+  ggtitle("Percentage of area covered by peaks of PSA for non-purified aliquot") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r descriptive-statistics-groups-non-purified}
+statistics <- data.non.purified %>% 
+  group_by(Peak, Method) %>% 
+  summarise(n = n(), mean = mean(Area, na.rm = T), sd = sd(Area, na.rm = T)) %>%
+  mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
+pander(statistics, split.cells = 1)
+``` 
+
+```{r scatter-plot-groups-non-purified}
+ggplot(data.non.purified, aes(x = Peak, y = Area, colour = Method)) + 
+  geom_point(position = position_dodge(width = 0.8)) + 
+  geom_pointrange(data = statistics, mapping=aes(x=Peak, y=mean, colour = Method, ymin=mean-sd, ymax=mean+sd), position = position_dodge(width = 0.8), shape = 95, size = 1.5) +
+  ggtitle("Percentage of area covered by peaks of PSA for non-purified aliquot") +
+  ylab("% Area") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+# Means and standard deviations
+
+```{r scatter-plot}
+ggplot(data, aes(x = Peak, y = Variation, colour=Method)) + 
+  geom_point(position=position_dodge(width=0.5)) + 
+  #stat_summary(fun.y="mean", size=3, shape=1, geom="point", position=position_dodge(width=0.5)) +
+  ggtitle("Variation of percentage of area covered by peaks of PSA (before - after purification)") +
+  ylab("% Area before - % Area after") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r descriptive-statistics-groups}
+statistics <- data %>% group_by(Peak, Method) %>% 
+  summarise(n = n(), mean = mean(Variation, na.rm = T), sd = sd(After, na.rm = T)) %>%
+    mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
+pander(statistics, split.cells = 1)
+``` 
+
+```{r confidence-intervals-means}
+ggplot(data = statistics, aes(x = Peak, y = mean, colour = Method, shape = Method)) +
+  geom_pointrange(aes(ymin = lower.ci, ymax = upper.ci), position = position_dodge(width = 0.5)) +
+  ggtitle("Confidence intervals for the means of \n variation of percentage of areas covered by peaks of PSA") +
+   ylab("% Area before - % Area after") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+We can observe that the method with more variability are A, E and F and the ones with less variability C and D.
+
+Intervals not containing 0 show a significant differences between the reference and the purified sample.
+
+In general, method with less variability are preferable, even if there is a significant variation, when the variation is close to zero.
+
+<!--chapter:end:descriptive.Rmd-->
+
+---
+title: "Method comparison"
+date: "`r Sys.Date()`"
+---
+
+```{r knitr-init, echo=F}
+library(knitr)
+## Global options
+options(digits = 4)
+opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning=F, dev="png", dev.args=list(type="cairo"), dpi=300)
+```
+
+```{r data-loading, results='hide'}
+source("data-loading.R")
+```
+
+# Comparison of means of methods E and F
+
+```{r t-test-EF}
+data.EF <- data[data$Method %in% c("E", "F"), ]
+result <- data.EF %>% group_by(Peak, Method) %>%
+  summarize(Variation = list(Variation)) %>%
+  spread(Method, Variation) %>%
+  mutate(t_value = t.test(unlist(E), unlist(F), var.equal = T)$statistic, 
+         p_value = t.test(unlist(E), unlist(F), var.equal = T)$p.value,
+         lower.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[1],
+         upper.ci = t.test(unlist(E), unlist(F), var.equal = T)$conf.int[2])
+pander(result[, c(1, 4:7)])
+```
+
+We can observe that the only peaks wehre there is a significant difference are peak 2 and 5. 
+
+```{r confidence-intervals-EF}
+statistics <- data.EF %>% group_by(Peak, Method) %>% 
+  summarise(n = n(), mean = mean(Variation, na.rm = T), sd = sd(After, na.rm = T)) %>%
+    mutate(se = sd/sqrt(n), lower.ci = mean-qt(1-(0.05/2), n-1)*se, upper.ci = mean+qt(1-(0.05/2), n-1)*se)
+ggplot(data = statistics, aes(x = Peak, y = mean, colour = Method, shape = Method)) +
+  geom_pointrange(aes(ymin = lower.ci, ymax = upper.ci), position = position_dodge(width = 0.5)) +
+  ggtitle("Confidence intervals for the means of \n variation of percentage of areas covered by peaks of PSA") +
+   ylab("% Area before - % Area after") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+<!--chapter:end:method-comparison.Rmd-->
+

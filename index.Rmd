@@ -1,6 +1,6 @@
 ---
 title: "PSA purification"
-date: "`r Sys.Date()`"
+date: "2019/09/09"
 ---
 
 ```{r knitr-init, echo=F}
@@ -11,7 +11,7 @@ opts_chunk$set(echo=F, cache=T, prompt=F, tidy=T, comment=NA, message=F, warning
 ```
 
 ```{r packages, results='hide'}
-.packages <- c("DT")
+.packages <- c("tidyverse", "kableExtra")
 .installed <- .packages %in% installed.packages()
 if (length(.packages[!.installed])>0) install.packages(.packages[!.installed])
 lapply(.packages, require, character.only=T)
@@ -65,9 +65,12 @@ source("data-loading.R")
 
 Total number of analysis: `r nrow(data)/10`
 ```{r sample-size-groups}
-countTable <- tbl_df(data) %>% count(Method)
-countTable$n <- countTable$n / 10
-pander(countTable)
+data %>%
+  group_by(Method, Type) %>%
+  count() %>%
+  mutate(n = n/10) %>%
+  kable() %>%
+  kable_styling(bootstrap_options = "hover", full_width = F)
 ```
 
 # Glosary
